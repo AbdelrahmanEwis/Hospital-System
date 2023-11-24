@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record model="ir.ui.view" id="patient_tag_tree">
+        <field name="name">patient_tag_tree</field>
+        <field name="model">patient.tag</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="active"/>
+                <field name="color" widget="color"/>
+                <field name="color_2" widget="color_picker" groups="base.group_no_one"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="patient_tag_form" model="ir.ui.view">
+        <field name="name">patient_tag</field>
+        <field name="model">patient.tag</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="color_2" widget="color" groups="base.group_no_one"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="color" widget="color_picker"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record model="ir.actions.act_window" id="patient_tag_action">
+        <field name="name">Patient Tags</field>
+        <field name="res_model">patient.tag</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new quotation, the first step of new sale!
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="patient_tag_child"
+              name="Tags"
+              sequence="20"
+              action="patient_tag_action"
+              parent="patient_tag_menu"/>
+</odoo>

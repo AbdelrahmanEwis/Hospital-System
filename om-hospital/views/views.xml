@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+
+    <record model="ir.ui.view" id="view_hospital_patient_tree">
+        <field name="name">hospital_patient_tree</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <tree export_xlsx="0">
+                <field name="name" string="Patient Name"/>
+                <field name="ref"/>
+                <field name="age" avg="Age Average"/>
+                <field name="appointment_count" sum="Appointment Sum"/>
+                <field name="gender"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="view_hospital_patient_search">
+        <field name="name">hospital_patient_search</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Patient Name"/>
+                <field name="ref"/>
+                <field name="age"/>
+                <field name="gender"/>
+                <filter string="Male" name="filter_male" domain="[('gender', '=', 'male')]"/>
+                <filter string="Female" name="filter_female" domain="[('gender', '=', 'female')]"/>
+                <!--                <separator/>-->
+                <!-- you can not use it with compute field
+                                <filter string="Kids" name="filter_kids" domain="[('age', '&lt;=', '5')]"/>-->
+                <filter string="Archive" name="filter_archive" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_gender" string="Gender" domain="[]" context="{'group_by':'gender'}"/>
+                </group>
+                <searchpanel>
+                    <field name="gender" icon="fa-users" string="GENDER"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="view_hospital_patient_form">
+        <field name="name">hospital_patient_form</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_appointment" type="object" class="oe_stat_button" icon="fa-star">
+                            <field string="Appointment" name="appointment_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="alert alert-success text-center o_form_header"
+                         attrs="{'invisible': [('is_birthday', '=', False)]}" role="alert">
+                        <a class="close" data-dismiss="alert" href="#">x</a>
+                        <div>
+                            <strong>Today Is Birthday</strong>
+                        </div>
+                        <div>Wish
+                            <field name="name" readonly="1"/>
+                        </div>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h4>
+                            <field name="ref" readonly="1"/>
+                        </h4>
+                        <h2>
+                            <label for="name" string="Name" class="oe_edit_only"/>
+                            <field name="name"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date_of_birth"/>
+                            <field name="age"/>
+                            <field name="is_birthday" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="gender" invisible="context.get('hide_gender')" widget="radio"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Other Information">
+                            <field name="parent"
+                                   attrs="{'invisible':['|', ('age', '&gt;=', 18), ('gender', '=', 'male')]}"/>
+                            <field name="marital_status" attrs="{'invisible': [('age', '&lt;=', 18)]}"/>
+                            <field name="partner_name" attrs="{'readonly': [('marital_status', '!=', 'married')],
+                            'required': [('marital_status', '=', 'married')]}"/>
+                        </group>
+                        <group>
+                            <field name="phone" widget="phone"/>
+                            <field name="email" widget="email"/>
+                            <field name="website" widget="url"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <record model="ir.actions.act_window" id="action_hospital_patient">
+        <field name="name">Patients</field>
+        <field name="res_model">hospital.patient</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_filter_male':1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new quotation, the first step of new sale!
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="hospital_patient_menu"
+              name="Patient"
+              sequence="0"
+              action="action_hospital_patient"
+              parent="om-hospital.hospital_menu_patient"/>
+
+
+</odoo>
+
+
+
